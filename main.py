@@ -27,9 +27,7 @@ class TratamentoStatus(IntEnum):
 ativos = []
 id_ativo = 1
 
-def cadastrar_ativo():
-
-    global id_ativo
+def acessar_cadastro():
     
     print("""Opções de cadastro: 
                
@@ -42,22 +40,31 @@ def cadastrar_ativo():
 
     match escolha:
 
-        case 1:
- 
-            print('Escreva as informações do ativo a ser cadastrado\n')
-            nome_host = input('Nome ou hostname: ')
-            responsavel = input('Responsavel: ')
-            setor = input('Setor/localização: ')
+        case 1: 
+            cadastrar_ativo()
+
+        case 2:
+            cadastrar_vuln()
 
 
-            print('\n---- Tipos de Ativos ----\n')
+def cadastrar_ativo():
 
-            for tipo in TipoAtivo:
-                print(f'   {tipo.value} - {tipo.name}')
+    global id_ativo
+    
+    print('Escreva as informações do ativo a ser cadastrado\n')
+    nome_host = input('Nome ou hostname: ')
+    responsavel = input('Responsavel: ')
+    setor = input('Setor/localização: ')
 
-            tipo_ativo = TipoAtivo(int(input('Tipo: ')))
 
-            ativo = {
+    print('\n---- Tipos de Ativos ----\n')
+
+    for tipo in TipoAtivo:
+        print(f'   {tipo.value} - {tipo.name}')
+
+    tipo_ativo = TipoAtivo(int(input('Tipo: ')))
+
+    ativo = {
 
     "ID" : id_ativo,
     "nome/hostname" : nome_host,
@@ -68,15 +75,13 @@ def cadastrar_ativo():
 
         }
 
-            ativos.append(ativo)
-            print('Ativo cadastrado com sucesso!!')
-            id_ativo += 1 
+    ativos.append(ativo)
+    print('Ativo cadastrado com sucesso!!')
+    id_ativo += 1 
         
-            sleep(3)
-            return
-        
-        case 2: 
-            cadastrar_vuln()
+    sleep(3)
+    return
+
 
 def cadastrar_vuln():
 
@@ -171,4 +176,5 @@ while True:
             break
         
         case 1:
-            cadastrar_ativo()
+
+            acessar_cadastro()
