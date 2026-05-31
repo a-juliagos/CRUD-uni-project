@@ -2,22 +2,22 @@ from enum import IntEnum
 from time import sleep
 import os
 
-class tipoAtivo(IntEnum): 
+class TipoAtivo(IntEnum): 
 
     NOTEBOOK = 1
     SERVIDOR = 2
     BANCO_DE_DADOS = 3
-    SOFTWARE_lICENCIADO = 4 
+    SOFTWARE_LICENCIADO = 4 
     IMPRESSORA_DE_REDE = 5
 
-class severidadeTipo(IntEnum):
+class SeveridadeTipo(IntEnum):
 
     BAIXA = 1
-    MÉDIA = 2
+    MEDIA = 2
     ALTA  = 3
     CRITICA = 4 
 
-class tratamentoStatus(IntEnum):
+class TratamentoStatus(IntEnum):
 
     AGUARDANDO = 1
     EM_PROCESSO = 2
@@ -30,76 +30,96 @@ id_ativo = 1
 def cadastrar_ativo():
 
     global id_ativo
+    
+    print("""Opções de cadastro: 
+               
+   1 - Cadastrar Ativo
+   2 - Cadastrar Vulnerabilidade
+               
+     """)
+    
+    escolha = int(input('Escolha uma opção para continuar: '))
 
-    print('Digite as Informações do ativo a ser cadastrado\n')
-    nome_host = input('Nome ou hostname: ')
-    responsavel = input('Responsavel: ')
-    setor = input('Setor/localização: ')
+    match escolha:
+
+        case 1:
+ 
+            print('Escreva as informações do ativo a ser cadastrado\n')
+            nome_host = input('Nome ou hostname: ')
+            responsavel = input('Responsavel: ')
+            setor = input('Setor/localização: ')
 
 
-    print('\n---- Tipos de Ativos ----')
+            print('\n---- Tipos de Ativos ----\n')
 
-    for tipo in tipoAtivo:
-        print(f'{tipo.value} - {tipo.name}')
+            for tipo in TipoAtivo:
+                print(f'   {tipo.value} - {tipo.name}')
 
-    tipo_ativo = tipoAtivo(int(input('Tipo: ')))
+            tipo_ativo = TipoAtivo(int(input('Tipo: ')))
 
-    ativo = {
+            ativo = {
 
-"ID" : id_ativo,
-"nome/hostname" : nome_host,
-"responsavel" : responsavel,
-"setor" : setor,
-"tipo" : tipo_ativo.name,
-"vulnerabilidade" : []
+    "ID" : id_ativo,
+    "nome/hostname" : nome_host,
+    "responsavel" : responsavel,
+    "setor" : setor,
+    "tipo" : tipo_ativo.name,
+    "vulnerabilidade" : []
 
-    }
+        }
 
-    ativos.append(ativo)
-    print('Ativo cadastrado com sucesso!!')
-    id_ativo += 1 
+            ativos.append(ativo)
+            print('Ativo cadastrado com sucesso!!')
+            id_ativo += 1 
+        
+            sleep(3)
+            return
+        
+        case 2: 
+            cadastrar_vuln()
 
-    sleep(3)
-    return
+def cadastrar_vuln():
 
-def cadastrar_vulne():
-
-    global ativo
+    global ativos
 
     print("""Buscar ativo por:
           
-        1 - ID
-        2 - Nome/Hostname  
+   1 - ID
+   2 - Nome/Hostname  
 
           """)
     
-    opcao = int(input())
+    opcao = int(input('Escolha uma opção para continuar: '))
 
-    if opcao == 1:
+    match opcao:
 
-        procurado = int('Digite o ID do ativo desejado: ')
+        case 1:
 
-        if procurado == ativo["ID"]:
-            
-            descricao = input('Dscrição: ')
-            tipo = input('Tipo: ')
+            id_procurado = int(input('Digite o ID do ativo desejado: '))
 
-            print('---- Severidade ----')
+            for ativo in ativos:
 
-            for sev in severidadeTipo:
-                print(f'{sev.value} - {sev.name}')
+                if id_procurado == ativo["ID"]:
+                
+                    descricao = input('Descrição: ')
+                    tipo = input('Tipo: ')
+
+                    print('\n---- Severidade ----\n')
+
+                    for sev in SeveridadeTipo:
+                        print(f'   {sev.value} - {sev.name}')
     
-            sev_tipo = severidadeTipo(int(input('Severidade: ')))
+                    sev_tipo = SeveridadeTipo(int(input('Severidade: ')))
 
-            print('---- Status de Tratamento ----')
+                    print('\n---- Status de Tratamento ----\n')
 
-            for status in tratamentoStatus:
-                print(f'{status.value} - {status.name}')
+                    for status in TratamentoStatus:
+                        print(f'   {status.value} - {status.name}')
     
-            status_tipo = tratamentoStatus(int(input('Status de Tratamento: ')))
+                    status_tipo = TratamentoStatus(int(input('Status de Tratamento: ')))
 
 
-        vulnerabilidades = {
+                    vulnerabilidades = {
 
         "descricao" : descricao,
         "tipo" : tipo,
@@ -108,14 +128,14 @@ def cadastrar_vulne():
 
         }
 
-        ativos["vulnerabildades"].append(vulnerabilidades)
-
+                    ativo["vulnerabilidade"].append(vulnerabilidades)
+        
     
-    elif opcao == 2:
+    # elif opcao == 2:
 
-         procurado = int('Digite o Nome ou Hostname do ativo desejado: ')
+    #      procurado = int('Digite o Nome ou Hostname do ativo desejado: ')
 
-         if procurado == ativo["Nome/Hostname"]:
+    #      if procurado == ativo["Nome/Hostname"]:
         
 
 # def buscar_lis_ativo():
@@ -123,7 +143,8 @@ def cadastrar_vulne():
 
 # def atualizar_ativo():
 
-# def excluir ativo():
+
+# def excluir_ativo():
 
 
 while True:
@@ -141,15 +162,13 @@ while True:
 """)
     escolha = int(input('Escolha uma opção para continuar: '))
 
-    if escolha == 0:
+    match escolha:
 
-        print('Encerrando sistema...')
-        sleep(3)
-        break
+        case 0:
 
-    elif escolha == 1:
-
-        cadastrar_ativo()
-
-    
-    
+            print('Encerrando sistema...')
+            sleep(3)
+            break
+        
+        case 1:
+            cadastrar_ativo()
