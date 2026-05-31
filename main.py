@@ -27,7 +27,7 @@ class TratamentoStatus(IntEnum):
 ativos = []
 id_ativo = 1
 
-def acessar_cadastro():
+def menu_cadastro():
     
     print("""Opções de cadastro: 
                
@@ -67,11 +67,11 @@ def cadastrar_ativo():
     ativo = {
 
     "ID" : id_ativo,
-    "nome/hostname" : nome_host,
+    "nome_hostname" : nome_host,
     "responsavel" : responsavel,
     "setor" : setor,
     "tipo" : tipo_ativo.name,
-    "vulnerabilidade" : []
+    "vulnerabilidades" : []
 
         }
 
@@ -84,8 +84,6 @@ def cadastrar_ativo():
 
 
 def cadastrar_vuln():
-
-    global ativos
 
     print("""Buscar ativo por:
           
@@ -102,7 +100,7 @@ def cadastrar_vuln():
 
             id_procurado = int(input('Digite o ID do ativo desejado: '))
 
-            for ativo in ativos:
+            for ativo in ativos: 
 
                 if id_procurado == ativo["ID"]:
                 
@@ -141,13 +139,36 @@ def cadastrar_vuln():
     #      procurado = int('Digite o Nome ou Hostname do ativo desejado: ')
 
     #      if procurado == ativo["Nome/Hostname"]:
-        
 
-# def buscar_lis_ativo():
 
+def buscar_ativo(ativo_buscado):
+
+    if ativo_buscado.isdigit():
+        ativo_buscado = int(ativo_buscado)
+
+    for ativo in ativos:
+        if ativo_buscado == ativo["ID"] or ativo["nome_hostname"]:
+
+            return ativo
+
+
+def listar_ativo(ativo):
+
+    print(f"""
+
+ID: {ativo["ID"]}
+Nome/Hostname: {ativo["nome_hostname"]}
+Responsável: {ativo["responsavel"]}
+Setor: {ativo["setor"]}
+Tipo: {ativo["tipo"]}
+          
+
+Vulnerabilidades: 
+{ativo["vulnerabilidades"]}
+
+""")
 
 # def atualizar_ativo():
-
 
 # def excluir_ativo():
 
@@ -159,12 +180,13 @@ while True:
 ---- Bem Vindo ao Sistema de Cadastro ----
    
    1 - Cadastrar Ativo/Vulnerabilidade
-   2 - Buscar/Listar
+   2 - Buscar
    3 - Atualizar
    4 - Remover
    0 - Sair 
 
 """)
+    
     escolha = int(input('Escolha uma opção para continuar: '))
 
     match escolha:
@@ -177,4 +199,24 @@ while True:
         
         case 1:
 
-            acessar_cadastro()
+            menu_cadastro()
+
+        case 2:
+
+            if len(ativos) == 0 :
+                print('Não existem ativos cadastrados!!')
+
+            elif len(ativos) > 0:
+
+                ativo_buscado = input('Digite o nome/hostname ou ID do ativo buscado: ')
+                buscar_ativo(ativo_buscado)
+
+                ativo = buscar_ativo(ativo_buscado)
+
+                if ativo:
+
+                    listar_ativo(ativo)
+
+                else:
+                    print('O ativo buscado não existe!!')
+                    
