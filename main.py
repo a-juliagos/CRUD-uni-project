@@ -1,7 +1,10 @@
 from enum import IntEnum
 from time import sleep
+from colorama import Fore, Style, init
 import json
 import os
+
+init()
 
 class TipoAtivo(IntEnum): 
 
@@ -112,7 +115,7 @@ def cadastrar_ativo():
     ativos.append(ativo)
     salvar_dados()
 
-    print('Ativo cadastrado com sucesso!!')
+    print(Fore.YELLOW + 'Ativo cadastrado com sucesso!!' + Style.RESET_ALL)
     id_ativo += 1 
     
     pausar()
@@ -153,7 +156,7 @@ def cadastrar_vuln():
     ativo["vulnerabilidades"].append(vulnerabilidades)
 
     salvar_dados()
-    print("Vulnerabilidade cadastrada com sucesso!")
+    print(Fore.YELLOW + 'Vulnerabilidade cadastrada com sucesso!'+ Style.RESET_ALL)
 
     pausar()
     
@@ -196,9 +199,10 @@ ID: {ativo["ID"]}
 Nome/Hostname: {ativo["nome_hostname"]}
 Responsável: {ativo["responsavel"]}
 Setor: {ativo["setor"]}
-Tipo: {ativo["tipo"]}     
+Tipo: {ativo["tipo"]}   
+""")  
 
----- Vulnerabilidades --- """)
+    print(Fore.BLUE + '---- Vulnerabilidades --- ' + Style.RESET_ALL)
     
     if not ativo["vulnerabilidades"]:
 
@@ -208,13 +212,13 @@ Tipo: {ativo["tipo"]}
 
         for i, vuln in enumerate(ativo["vulnerabilidades"], start=1):
             
-            print(f"""   
+            print(Fore.BLUE + f"""   
 Vulnerabilidade {i}
 
 Descrição: {vuln["descricao"]}
 Tipo: {vuln["tipo"]}
 Severidade: {vuln["severidade"]}
-Status: {vuln["status"]} """)
+Status: {vuln["status"]} """ + Style.RESET_ALL)
             
 
 def listar_all_ativos():
@@ -255,7 +259,7 @@ def atualizar_ativo():
     ativo["setor"] = novo_setor
 
     salvar_dados()
-    print('Ativo atualizado com sucesso!!')
+    print(Fore.YELLOW + 'Ativo atualizado com sucesso!!' + Style.RESET_ALL)
     pausar()
    
 
@@ -271,7 +275,7 @@ def excluir_ativo():
     ativos.remove(ativo)
     salvar_dados()
 
-    print(f'O ativo {nome} foi excluído com sucesso!!')
+    print(Fore. YELLOW + f'O ativo {nome} foi excluído com sucesso!!' + Style.RESET_ALL)
     
     pausar()
 
@@ -316,9 +320,8 @@ while True:
 
     limpar_tela()
 
+    print(Fore.MAGENTA + '---- Bem Vindo ao Sistema de Cadastro ----' + Style.RESET_ALL)
     print("""
----- Bem Vindo ao Sistema de Cadastro ----
-   
    1 - Cadastrar Ativo/Vulnerabilidade
    2 - Buscar/Listar
    3 - Atualizar
@@ -326,14 +329,13 @@ while True:
    0 - Sair 
 """)
 
-  
     escolha = ler_opcao('Escolha uma opção para continuar: ')
      
     match escolha:
 
         case 0:
 
-            print('Encerrando sistema...')
+            print(Fore.RED + 'Encerrando sistema...' + Style.RESET_ALL)
             sleep(2)
             break
         
@@ -347,7 +349,6 @@ while True:
    2 - Cadastrar Vulnerabilidade             
      """)
             
-           
             escolha = ler_opcao('Escolha uma opção para continuar: ')        
 
             match escolha:
@@ -391,11 +392,9 @@ while True:
                     print("Escolha um valor válido.")
      
         case 3:
-
             atualizar_ativo()
 
         case 4:
-
             excluir_ativo()
         
         case _:
