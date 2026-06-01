@@ -31,8 +31,44 @@ def limpar_tela():
 
     os.system('cls')
 
+
 def pausar():
     input("\nPressione ENTER para continuar...")
+
+
+def proibir_vazio(mensagem):
+
+    while True:
+
+        texto = input(mensagem).strip()
+
+        if texto:
+            return texto 
+        
+        print("O campo não pode ficar vazio.")
+
+
+def ler_opcao(mensagem):
+
+    while True:
+
+        try:
+            return int(input(mensagem))
+
+        except ValueError:
+            print('Escolha uma opção válida')
+
+
+def ler_enum(enum, mensagem):
+
+    while True:
+
+        try:
+            valor = int(input(mensagem))
+            return enum(valor)
+
+        except ValueError:
+            print("Escolha uma opção válida.")
 
 
 def cadastrar_ativo():
@@ -43,7 +79,7 @@ def cadastrar_ativo():
 
     while True:
 
-        nome_host = input('Nome ou hostname: ').strip()
+        nome_host = proibir_vazio('Nome ou hostname: ')
 
         if any(nome_host.lower() == ativo["nome_hostname"].lower() for ativo in ativos):
             print('Este nome já está em uso!\n')
@@ -51,15 +87,17 @@ def cadastrar_ativo():
         else:
             break
 
-    responsavel = input('Responsavel: ')
-    setor = input('Setor/localização: ')
+    responsavel = proibir_vazio('Responsavel: ')
+    setor = proibir_vazio('Setor/localização: ')
 
     print('\n---- Tipos de Ativos ----\n')
 
     for tipo in TipoAtivo:
         print(f'   {tipo.value} - {tipo.name}')
 
-    tipo_ativo = TipoAtivo(int(input('Tipo: ')))
+
+    tipo_ativo = ler_enum(TipoAtivo, 'Tipo: ')
+    
 
     ativo = {
     "ID" : id_ativo,
@@ -83,22 +121,22 @@ def cadastrar_vuln():
 
     if ativo:
             
-        descricao = input('Descrição: ')
-        tipo = input('Tipo: ')
+        descricao = proibir_vazio('Descrição: ')
+        tipo = proibir_vazio('Tipo: ')
 
         print('\n---- Severidade ----\n')
 
         for sev in SeveridadeTipo:
             print(f'   {sev.value} - {sev.name}')
     
-        sev_tipo = SeveridadeTipo(int(input('Severidade: ')))
+        sev_tipo = ler_enum(SeveridadeTipo,'Severidade: ')
 
         print('\n---- Status de Tratamento ----\n')
 
         for status in TratamentoStatus:
                 print(f'   {status.value} - {status.name}')
     
-        status_tipo = TratamentoStatus(int(input('Status de Tratamento: ')))
+        status_tipo = ler_enum(TratamentoStatus,'Status de Tratamento: ')
 
 
         vulnerabilidades = {
@@ -122,7 +160,7 @@ def buscar_ativo():
         pausar()
         return None
 
-    ativo_buscado = input(
+    ativo_buscado = proibir_vazio(
         'Digite o nome/hostname ou ID do ativo buscado: '
     )
 
@@ -192,30 +230,26 @@ def atualizar_ativo():
     ativo = buscar_ativo()
 
     if not ativo:
-        
-        print('O ativo não existe ou foi excluído.')
-        pausar()
         return
     
     while True:
             
-        novo_nome_host = input('Digite o novo nome: ')
+        novo_nome_host = proibir_vazio('Digite o novo nome: ')
             
-        if any( novo_nome_host == a["nome_hostname"] for a in ativos if a["ID"] != ativo["ID"] ):
+        if any( novo_nome_host.lower() == a["nome_hostname"].lower() for a in ativos if a["ID"] != ativo["ID"] ):
             print('Este nome já está em uso!')
 
         else:
             break
 
-    novo_responsavel = input('Digite o novo responsável: ')
-    novo_setor = input('Digite o novo setor: ')
+    novo_responsavel = proibir_vazio('Digite o novo responsável: ')
+    novo_setor = proibir_vazio('Digite o novo setor: ')
 
     ativo["nome_hostname"] = novo_nome_host
     ativo["responsavel"] = novo_responsavel
     ativo["setor"] = novo_setor
 
     print('Ativo atualizado com sucesso!!')
-
     pausar()
    
 
@@ -230,10 +264,8 @@ def excluir_ativo():
         ativos.remove(ativo)
         print(f'O ativo {nome} foi excluído com sucesso!!')
 
-    else:
-        print('O ativo não existe ou foi excluído.')
-
-    pausar()
+    if not ativo:
+        return
    
 
 while True:
@@ -249,9 +281,10 @@ while True:
    4 - Remover
    0 - Sair 
 """)
-    
-    escolha = int(input('Escolha uma opção para continuar: '))
 
+  
+    escolha = ler_opcao('Escolha uma opção para continuar: ')
+     
     match escolha:
 
         case 0:
@@ -269,8 +302,9 @@ while True:
    1 - Cadastrar Ativo
    2 - Cadastrar Vulnerabilidade             
      """)
-    
-            escolha = int(input('Escolha uma opção para continuar: '))
+            
+           
+            escolha = ler_opcao('Escolha uma opção para continuar: ')        
 
             match escolha:
                 
@@ -293,8 +327,9 @@ while True:
    2 - Listar todos            
      """)
     
-            escolha = int(input('Escolha uma opção para continuar: '))
-
+    
+            escolha = ler_opcao('Escolha uma opção para continuar: ')
+            
             match escolha:
                 
                 case 1: 
@@ -319,6 +354,7 @@ while True:
         case 4:
 
             excluir_ativo()
+            pausar()
         
         case _:
             print("Escolha um valor válido.")
