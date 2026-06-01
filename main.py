@@ -51,10 +51,19 @@ def cadastrar_ativo():
     global id_ativo
     
     print('Escreva as informações do ativo a ser cadastrado\n')
-    nome_host = input('Nome ou hostname: ')
+
+    while True:
+
+        nome_host = input('Nome ou hostname: ')
+
+        if any(nome_host == ativo["nome_hostname"] for ativo in ativos):
+            print('Este nome já está em uso!\n')
+        
+        else:
+            break
+
     responsavel = input('Responsavel: ')
     setor = input('Setor/localização: ')
-
 
     print('\n---- Tipos de Ativos ----\n')
 
@@ -64,14 +73,12 @@ def cadastrar_ativo():
     tipo_ativo = TipoAtivo(int(input('Tipo: ')))
 
     ativo = {
-
     "ID" : id_ativo,
     "nome_hostname" : nome_host,
     "responsavel" : responsavel,
     "setor" : setor,
     "tipo" : tipo_ativo.name,
     "vulnerabilidades" : []
-
         }
 
     ativos.append(ativo)
@@ -107,12 +114,10 @@ def cadastrar_vuln():
 
 
             vulnerabilidades = {
-
         "descricao" : descricao,
         "tipo" : tipo,
         "severidade" : sev_tipo.name,
         "status" : status_tipo.name
-
         }
 
             ativo["vulnerabilidades"].append(vulnerabilidades)
@@ -214,4 +219,3 @@ while True:
            if certo :
                
                listar_ativo(certo)
-               
