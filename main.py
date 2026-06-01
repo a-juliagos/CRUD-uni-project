@@ -32,8 +32,7 @@ def menu_cadastro():
     print("""Opções de cadastro: 
                
    1 - Cadastrar Ativo
-   2 - Cadastrar Vulnerabilidade
-               
+   2 - Cadastrar Vulnerabilidade             
      """)
     
     escolha = int(input('Escolha uma opção para continuar: '))
@@ -84,45 +83,30 @@ def cadastrar_ativo():
 
 
 def cadastrar_vuln():
+        
+        ativo = conferir_ativo()
 
-    print("""Buscar ativo por:
-          
-   1 - ID
-   2 - Nome/Hostname  
+        if ativo:
+            
+            descricao = input('Descrição: ')
+            tipo = input('Tipo: ')
 
-          """)
+            print('\n---- Severidade ----\n')
+
+            for sev in SeveridadeTipo:
+                print(f'   {sev.value} - {sev.name}')
     
-    opcao = int(input('Escolha uma opção para continuar: '))
+            sev_tipo = SeveridadeTipo(int(input('Severidade: ')))
 
-    match opcao:
+            print('\n---- Status de Tratamento ----\n')
 
-        case 1:
-
-            id_procurado = int(input('Digite o ID do ativo desejado: '))
-
-            for ativo in ativos: 
-
-                if id_procurado == ativo["ID"]:
-                
-                    descricao = input('Descrição: ')
-                    tipo = input('Tipo: ')
-
-                    print('\n---- Severidade ----\n')
-
-                    for sev in SeveridadeTipo:
-                        print(f'   {sev.value} - {sev.name}')
+            for status in TratamentoStatus:
+                print(f'   {status.value} - {status.name}')
     
-                    sev_tipo = SeveridadeTipo(int(input('Severidade: ')))
-
-                    print('\n---- Status de Tratamento ----\n')
-
-                    for status in TratamentoStatus:
-                        print(f'   {status.value} - {status.name}')
-    
-                    status_tipo = TratamentoStatus(int(input('Status de Tratamento: ')))
+            status_tipo = TratamentoStatus(int(input('Status de Tratamento: ')))
 
 
-                    vulnerabilidades = {
+            vulnerabilidades = {
 
         "descricao" : descricao,
         "tipo" : tipo,
@@ -131,14 +115,7 @@ def cadastrar_vuln():
 
         }
 
-                    ativo["vulnerabilidade"].append(vulnerabilidades)
-        
-    
-    # elif opcao == 2:
-
-    #      procurado = int('Digite o Nome ou Hostname do ativo desejado: ')
-
-    #      if procurado == ativo["Nome/Hostname"]:
+            ativo["vulnerabilidades"].append(vulnerabilidades)
 
 
 def buscar_ativo(ativo_buscado):
@@ -147,26 +124,57 @@ def buscar_ativo(ativo_buscado):
         ativo_buscado = int(ativo_buscado)
 
     for ativo in ativos:
-        if ativo_buscado == ativo["ID"] or ativo["nome_hostname"]:
+        if ativo_buscado == ativo["ID"] or ativo_buscado == ativo["nome_hostname"]:
 
             return ativo
+        
+    return None
 
+
+def conferir_ativo():
+
+    if len(ativos) == 0 :
+        print('Não existem Ativos cadastrados!!')
+        return None
+    
+    elif len(ativos) > 0:
+        
+        ativo_buscado = input('Digite o nome/hostname ou ID do ativo buscado: ')
+        ativo = buscar_ativo(ativo_buscado)
+
+        if ativo:
+            return ativo
+
+    return None
+                    
 
 def listar_ativo(ativo):
 
-    print(f"""
-
+    print(f""" 
+-------------------------
+          
 ID: {ativo["ID"]}
 Nome/Hostname: {ativo["nome_hostname"]}
 Responsável: {ativo["responsavel"]}
 Setor: {ativo["setor"]}
-Tipo: {ativo["tipo"]}
-          
+Tipo: {ativo["tipo"]}     
 
-Vulnerabilidades: 
-{ativo["vulnerabilidades"]}
+---- Vulnerabilidades --- """)
+    
+    if len(ativo["vulnerabilidades"]) == 0:
 
-""")
+        print('\nNão existem Vulnerabilidades cadastradas!!')
+
+    elif len(ativo["vulnerabilidades"]) > 0:
+
+        for vuln in ativo["vulnerabilidades"]:
+            
+            print(f"""                             
+Descrição: {vuln["descricao"]}
+Tipo: {vuln["tipo"]}
+Severidade: {vuln["severidade"]}
+Status: {vuln["status"]}   """)
+
 
 # def atualizar_ativo():
 
@@ -176,7 +184,6 @@ Vulnerabilidades:
 while True:
 
     print("""
-
 ---- Bem Vindo ao Sistema de Cadastro ----
    
    1 - Cadastrar Ativo/Vulnerabilidade
@@ -184,7 +191,6 @@ while True:
    3 - Atualizar
    4 - Remover
    0 - Sair 
-
 """)
     
     escolha = int(input('Escolha uma opção para continuar: '))
@@ -203,20 +209,9 @@ while True:
 
         case 2:
 
-            if len(ativos) == 0 :
-                print('Não existem ativos cadastrados!!')
+           certo = conferir_ativo()
 
-            elif len(ativos) > 0:
-
-                ativo_buscado = input('Digite o nome/hostname ou ID do ativo buscado: ')
-                buscar_ativo(ativo_buscado)
-
-                ativo = buscar_ativo(ativo_buscado)
-
-                if ativo:
-
-                    listar_ativo(ativo)
-
-                else:
-                    print('O ativo buscado não existe!!')
-                    
+           if certo :
+               
+               listar_ativo(certo)
+               
