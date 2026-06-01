@@ -123,19 +123,6 @@ def cadastrar_vuln():
             ativo["vulnerabilidades"].append(vulnerabilidades)
 
 
-def buscar_ativo(ativo_buscado):
-
-    if ativo_buscado.isdigit():
-        ativo_buscado = int(ativo_buscado)
-
-    for ativo in ativos:
-        if ativo_buscado == ativo["ID"] or ativo_buscado == ativo["nome_hostname"]:
-
-            return ativo
-        
-    return None
-
-
 def conferir_ativo():
 
     if len(ativos) == 0 :
@@ -151,7 +138,20 @@ def conferir_ativo():
             return ativo
 
     return None
-                    
+
+
+def buscar_ativo(ativo_buscado):
+
+    if ativo_buscado.isdigit():
+        ativo_buscado = int(ativo_buscado)
+
+    for ativo in ativos:
+        if ativo_buscado == ativo["ID"] or ativo_buscado == ativo["nome_hostname"]:
+
+            return ativo
+        
+    return None
+
 
 def listar_ativo(ativo):
 
@@ -181,9 +181,48 @@ Severidade: {vuln["severidade"]}
 Status: {vuln["status"]}   """)
 
 
-# def atualizar_ativo():
+def atualizar_ativo():
 
-# def excluir_ativo():
+    ativo = conferir_ativo()
+
+    if ativo:
+        
+        while True:
+            
+            novo_nome_host = input('Digite o novo nome: ')
+            
+            if any( novo_nome_host == a["nome_hostname"] for a in ativos if a["ID"] != ativo["ID"] ):
+                print('Este nome já está em uso!')
+
+            else:
+                break
+
+        novo_responsavel = input('Digite o novo responsável: ')
+        novo_setor = input('Digite o novo setor: ')
+
+        ativo["nome_hostname"] = novo_nome_host
+        ativo["responsavel"] = novo_responsavel
+        ativo["setor"] = novo_setor
+
+        print('Ativo atualizado com sucesso!!')
+
+    if not ativo:
+        print('O ativo não existe ou foi excluído.')
+        return
+
+
+def excluir_ativo():
+
+    ativo = conferir_ativo()
+    nome = ativo["nome_hostname"]
+
+    if ativo:
+
+        ativos.remove(ativo)
+        print(f'O ativo {nome} foi excluído com sucesso!!')
+
+    else:
+        print('O ativo não existe ou foi excluído.')
 
 
 while True:
@@ -219,3 +258,15 @@ while True:
            if certo :
                
                listar_ativo(certo)
+
+           else:
+               
+               print('O ativo não existe ou foi excluído.')
+               
+        case 3:
+
+            atualizar_ativo()
+
+        case 4:
+
+            excluir_ativo()
