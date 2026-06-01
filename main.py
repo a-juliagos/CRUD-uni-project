@@ -1,5 +1,6 @@
 from enum import IntEnum
 from time import sleep
+import json
 import os
 
 class TipoAtivo(IntEnum): 
@@ -57,7 +58,7 @@ def ler_opcao(mensagem):
 
         except ValueError:
             print('Escolha uma opção válida')
-
+           
 
 def ler_enum(enum, mensagem):
 
@@ -109,9 +110,11 @@ def cadastrar_ativo():
         }
 
     ativos.append(ativo)
+    salvar_dados()
+
     print('Ativo cadastrado com sucesso!!')
     id_ativo += 1 
-        
+    
     pausar()
 
 
@@ -119,36 +122,38 @@ def cadastrar_vuln():
         
     ativo = buscar_ativo()
 
-    if ativo:
-            
-        descricao = proibir_vazio('Descrição: ')
-        tipo = proibir_vazio('Tipo: ')
+    if not ativo:
+        return
 
-        print('\n---- Severidade ----\n')
+    descricao = proibir_vazio('Descrição: ')
+    tipo = proibir_vazio('Tipo: ')
 
-        for sev in SeveridadeTipo:
-            print(f'   {sev.value} - {sev.name}')
+    print('\n---- Severidade ----\n')
+
+    for sev in SeveridadeTipo:
+        print(f'   {sev.value} - {sev.name}')
     
-        sev_tipo = ler_enum(SeveridadeTipo,'Severidade: ')
+    sev_tipo = ler_enum(SeveridadeTipo,'Severidade: ')
 
-        print('\n---- Status de Tratamento ----\n')
+    print('\n---- Status de Tratamento ----\n')
 
-        for status in TratamentoStatus:
-                print(f'   {status.value} - {status.name}')
+    for status in TratamentoStatus:
+        print(f'   {status.value} - {status.name}')
     
-        status_tipo = ler_enum(TratamentoStatus,'Status de Tratamento: ')
+    status_tipo = ler_enum(TratamentoStatus,'Status de Tratamento: ')
 
 
-        vulnerabilidades = {
+    vulnerabilidades = {
         "descricao" : descricao,
         "tipo" : tipo,
         "severidade" : sev_tipo.name,
         "status" : status_tipo.name
         }
 
-        ativo["vulnerabilidades"].append(vulnerabilidades)
+    ativo["vulnerabilidades"].append(vulnerabilidades)
 
-        print("Vulnerabilidade cadastrada com sucesso!")
+    salvar_dados()
+    print("Vulnerabilidade cadastrada com sucesso!")
 
     pausar()
     
@@ -249,6 +254,7 @@ def atualizar_ativo():
     ativo["responsavel"] = novo_responsavel
     ativo["setor"] = novo_setor
 
+    salvar_dados()
     print('Ativo atualizado com sucesso!!')
     pausar()
    
@@ -256,18 +262,56 @@ def atualizar_ativo():
 def excluir_ativo():
 
     ativo = buscar_ativo()
-    
-    if ativo:
-
-        nome = ativo["nome_hostname"]
-
-        ativos.remove(ativo)
-        print(f'O ativo {nome} foi excluído com sucesso!!')
 
     if not ativo:
         return
-   
+    
+    nome = ativo["nome_hostname"]
 
+    ativos.remove(ativo)
+    salvar_dados()
+
+    print(f'O ativo {nome} foi excluído com sucesso!!')
+    
+    pausar()
+
+
+def salvar_dados():
+
+    with open("ativos.json", "w", encoding="utf-8") as arquivo:
+
+        json.dump(
+            ativos,
+            arquivo,
+            ensure_ascii=False,
+            indent=4
+        )
+
+
+def carregar_dados():
+
+    global ativos
+    global id_ativo
+
+    try:
+
+        with open("ativos.json", "r", encoding="utf-8") as arquivo:
+
+            ativos = json.load(arquivo)
+
+        if ativos:
+            id_ativo = max(
+                ativo["ID"] for ativo in ativos
+            ) + 1
+
+        else:
+            id_ativo = 1
+
+    except (FileNotFoundError, json.JSONDecodeError):
+        ativos = []
+
+
+carregar_dados()
 while True:
 
     limpar_tela()
@@ -327,7 +371,6 @@ while True:
    2 - Listar todos            
      """)
     
-    
             escolha = ler_opcao('Escolha uma opção para continuar: ')
             
             match escolha:
@@ -354,7 +397,6 @@ while True:
         case 4:
 
             excluir_ativo()
-            pausar()
         
         case _:
             print("Escolha um valor válido.")
